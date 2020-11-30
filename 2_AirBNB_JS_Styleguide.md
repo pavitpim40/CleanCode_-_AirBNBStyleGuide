@@ -503,7 +503,7 @@
     }
     ```
 <!-- ################ ทำถึงตรงนี้แล้ว ########################## -->
-  - [7.5](#7.5) <a name='7.5'></a> อย่าตั้งชื่อพารามิเตอร์ว่า `arguments` เพราะจะไปทับออบเจ็กต์ `arguments` ที่ตัวภาษาจาวาสคริปต์มีไว้ให้อยู่แล้วในทุกๆฟังก์ชัน
+  - [7.5](#7.5) <a name='7.5'></a> ห้ามตั้งชื่อพารามิเตอร์ว่า `arguments` เพราะจะไปทับซ้อนออบเจ็กต์ `arguments` ที่ตัวภาษาจาวาสคริปต์มีไว้ให้อยู่แล้วในทุกๆฟังก์ชัน
 
     ```javascript
     // ไม่ดี
@@ -511,28 +511,27 @@
       // ...stuff...
     }
 
-    // ดี
+    // ดี - ใช้คำว่า args แทนคำว่า arguments
     function yup(name, options, args) {
       // ...stuff...
     }
     ```
 
   <a name="es6-rest"></a>
-  - [7.6](#7.6) <a name='7.6'></a> ให้ใช้ `...` (Rest Parament) แทนการใช้ `arguments`
-
-    > เพราะว่า  
-    1. `...` สามารถทำให้รู้ว่าฟังก์ชันนั้นมีการรับค่าพารามิเตอร์  
-    2. อีกทั้ง `...` จะได้ค่าอาร์เรย์จริงๆ ไม่ใช่ค่าออบเจ็กต์เหมือน `arguments`
+  - [7.6](#7.6) <a name='7.6'></a> ให้ใช้ `...` (Rest Parament) แทนการใช้ `arguments` เพราะว่า  
+    > 1. `...` สามารถทำให้รู้ว่าฟังก์ชันนั้นมีการรับค่าพารามิเตอร์  
+    > 2. อีกทั้ง `...` จะได้ค่าอาร์เรย์จริงๆ ไม่ใช่ค่าออบเจ็กต์เหมือน `arguments`
 
     ```javascript
-    // ไม่ดี
+    // ไม่ดี - รับมาเป็น Object แล้วนำไปทำเป็น Array อีกที
+    // แถมดูยากด้วยว่าฟังก์ชันนี้รับพารามิเตอร์หรือไม่รับกันแน่
     function concatenateAll() {
       const args = Array.prototype.slice.call(arguments);
       return args.join('');
     }
 
-    // ดี
-    function concatenateAll(...args) { // ทำให้รู้ว่าฟังก์ชันนี้รับพารามิเตอร์
+    // ดี - ทำให้รู้ว่าฟังก์ชันนี้รับพารามิเตอร์ได้หลายค่า
+    function concatenateAll(...args) { 
       return args.join('');
     }
     ```
@@ -548,7 +547,7 @@
       // ...
     }
 
-    // แย่
+    // แย่ - มี conditional
     function handleThings(opts) {
       if (opts === void 0) {
         opts = {};
@@ -556,19 +555,18 @@
       // ...
     }
 
-    // ดี
+    // ดี - ใส่ Default Value
     function handleThings(opts = {}) {
       // ...
     }
     ```
 
-  - [7.8](#7.8) <a name='7.8'></a> หลีกเลี่ยงการตั้งค่า defualt แบบซับซ้อน
+  - [7.8](#7.8) <a name='7.8'></a> หลีกเลี่ยงการตั้งค่า defualt แบบซับซ้อน (ทำให้สับสนง่าย)
 
-  > เพราะจะทำให้สับสนได้ง่าย
 
   ```javascript
   var b = 1;
-  // ไม่ดี
+  // ไม่ดี - ทุกครั้งที่เรียกฟังก์ชันแบบไม่มีพารามิเตอร์ค่า b จะเปลี่ยนไปเรื่อยๆ
   function count(a = b++) {
     console.log(a);
   }
@@ -590,12 +588,12 @@
     > แต่หากถ้าฟังก์ชันยาวมากๆ ให้แยกออกมาเป็น Function declarations แทนจะดีกว่า
 
     ```javascript
-    // ไม่ดี
+    // ไม่ดี - ทำเป็น Declaration
     [1, 2, 3].map(function (x) {
       return x * x;
     });
 
-    // ดี
+    // ดี - ทำเป็น Expression
     [1, 2, 3].map((x) => {
       return x * x;
     });
@@ -619,7 +617,7 @@
 
 ## Classes & Constructors
 
-  - [9.1](#9.1) <a name='9.1'></a> ใช้ `class` และหลีกเลี่ยงการเรียกใช้ `prototype` โดยตรง
+  - [9.1](#9.1) <a name='9.1'></a> ใช้ `class` และพยายามหลีกเลี่ยงการเรียกใช้ `prototype` 
 
 
     ```javascript
@@ -633,7 +631,7 @@
       return value;
     }
 
-    // ดี
+    // ดี - นำฟังก์ชัน pop มาใส่เป็นเมธอดของคลาส แทนที่จะอ้างอิงถึง prototype
     class Queue {
       constructor(contents = []) {
         this._queue = [...contents];
@@ -661,7 +659,7 @@
       return this._queue[0];
     }
 
-    // ดี
+    // ดี - เพราะใช้การ extend แทน prototype
     class PeekableQueue extends Queue {
       peek() {
         return this._queue[0];
@@ -672,7 +670,7 @@
   - [9.3](#9.3) <a name='9.3'></a> Method ใดๆควรคืนค่า `this` เพื่อทำให้สามารถใช้ Method chaining
 
     ```javascript
-    // ไม่ดี
+    // ไม่ดี 
     Jedi.prototype.jump = function() {
       this.jumping = true;
       return true;
@@ -684,9 +682,9 @@
 
     const luke = new Jedi();
     luke.jump(); // => true
-    luke.setHeight(20); // => undefined
+    luke.setHeight(20); // => undefined ใช้งานเมธอดต่อไม่ได้แล้ว 
 
-    // ดี
+    // ดี - สามารถ Chain Method ได้ทำให้โค้ดอ่านง่ายขึ้น
     class Jedi {
       jump() {
         this.jumping = true;
@@ -724,11 +722,10 @@
     }
     ```
 
-  - [9.5](#9.5) <a name="9.5"></a> ถ้า constructor ไม่ได้สร้างค่าอะไรใหม่ก็ไม่ควรเขียนลงไป  
-  เพราะ javaScript จะมี default constructure ให้อยู่แล้ว
+  - [9.5](#9.5) <a name="9.5"></a> ถ้า constructor ไม่ได้สร้างค่าอะไรใหม่ก็ไม่ควรเขียนลงไป  (๋JS มี default constructor ให้อยู่แล้ว)
 
     ```javascript
-    // ไม่ดี
+    // ไม่ดี - เพราะ Constructor ไม่ได้สร้างค่าอะไรใหม่
     class Jedi {
       constructor() {}
 
@@ -744,7 +741,7 @@
       }
     }
 
-    // ดี
+    // ดี - ตัว Constructor ได้ใช้สร้าง key-value
     class Rey extends Jedi {
       constructor(...args) {
         super(...args);
@@ -793,7 +790,7 @@
     import AirbnbStyleGuide from './AirbnbStyleGuide';
     export default AirbnbStyleGuide.es6;
 
-    // ดีที่สุด
+    // ดีที่สุด - รับมาแบบ Destructuring
     import { es6 } from './AirbnbStyleGuide';
     export default es6;
     ```
@@ -812,11 +809,9 @@
 
     ```javascript
     // ไม่ดี
-    // filename es6.js
     export { es6 as default } from './airbnbStyleGuide';
 
-    // ดี
-    // filename es6.js
+    // ดี - เพราะแยกบรรทัด Import Export ออกจากกัน อ่านง่ายกว่า
     import { es6 } from './AirbnbStyleGuide';
     export default es6;
     ```
@@ -825,7 +820,7 @@
 
 ## Iterators and Generators
 
-  - [11.1](#11.1) <a name='11.1'></a> หลีกเลี่ยงการใช้ `Iterators` โดยใช้ `map()` และ `reduce()` แทนการใช้งานลูปอย่าง `for-of`
+  - [11.1](#11.1) <a name='11.1'></a> ใช้ `map()` และ `reduce()` แทนการใช้งานลูปอย่าง `for-of`(หลีกเลี่ยงการใช้ `Iterators`)
 
     ```javascript
     const numbers = [1, 2, 3, 4, 5];
@@ -849,8 +844,7 @@
     ```
 
   - [11.2](#11.2) <a name='11.2'></a> หลีกเลี่ยงการใช้งาน `Generators` (ณ ปัจจุบัน)
-
-  > เพราะว่ายังไม่สามารถคอมไพล์กลับไปเป็น ES5 ได้อย่างสมบูรณ์
+ เพราะว่ายังไม่สามารถคอมไพล์กลับไปเป็น ES5 ได้อย่างสมบูรณ์
 
 **[[⬆ กลับไปด้านบน]](#TOC)**
 
@@ -879,7 +873,8 @@
       jedi: true,
       age: 28,
     };
-
+    // ฟังก์ชันนี้จะคืนค่า property ของ object ที่มีชื่อว่า luke 
+    // โดยใช้ [] เพื่อให้ user เป็นคนกำหนดเองว่าจะเลือก key อันไหนจาก object
     function getProp(prop) {
       return luke[prop];
     }
@@ -902,7 +897,7 @@
     const superPower = new SuperPower();
     ```
 
-  - [13.2](#13.2) <a name='13.2'></a> ใช้ `const`หนึ่งครั้งต่อการประกาศตัวแปรหนึ่งตัว (อ่านง่ายกว่าและกันลืมเขียน , ) 
+  - [13.2](#13.2) <a name='13.2'></a> ใช้ `const`หนึ่งครั้งต่อการประกาศตัวแปรหนึ่งตัว (อ่านง่ายกว่าและป้องกันการลืมเขียนคอมม่า `,` ) 
 
     
 
@@ -912,21 +907,22 @@
         goSportsTeam = true,
         dragonball = 'z';
 
-    // ไม่ดี
+    // ไม่ดี - เขียน comma บ้าง semi-colon บ้าง
     // (compare to above, and try to spot the mistake)
     const items = getItems(),
         goSportsTeam = true;
         dragonball = 'z';
 
-    // ดี
+    // ดี - ประกาศแยกของใครของมันไปเลย
     const items = getItems();
     const goSportsTeam = true;
     const dragonball = 'z';
     ```
 
-  - [13.3](#13.3) <a name='13.3'></a> ประกาศ `const` ไว้ที่เดียวกันเป็นกลุ่ม   
-  จากนั้นตามด้วยการประกาศ `let` ไว้ที่เดียวกัน (อย่าสลับไปมา)   
-  ส่วนตัวแปรที่ยังไม่ทราบค่าให้เขียนไว้ด้านล่างเสมอจะได้อ่านง่าย
+  - [13.3](#13.3) <a name='13.3'></a> ลำดับของประเภทตัวแปร  
+  - ประกาศ `const` ไว้ที่เดียวกันเป็นกลุ่ม  
+  - จากนั้นตามด้วยการประกาศ `let` ไว้ที่เดียวกัน 
+  - ส่วนตัวแปรที่ยังไม่ทราบค่าให้เขียนไว้ด้านล่างเสมอจะได้อ่านง่าย (อย่าสลับไปมา)  
 
 
     ```javascript
@@ -970,9 +966,9 @@
       return name;
     }
 
-    // ไม่ดี - unnecessary function call
+    // ไม่ดี 
     function(hasName) {
-      const name = getName();
+      const name = getName(); //อยู่ห่างจากฟังก์ชันที่เรียดใช้
 
       if (!hasName) {
         return false;
@@ -983,7 +979,7 @@
       return true;
     }
 
-    // ดี
+    // ดี - ประกาศสิ่งที่ต้องใช้ด้วยกันให้อยู่บรรทัดใกล้ๆกัน
     function(hasName) {
       if (!hasName) {
         return false;
@@ -1013,11 +1009,11 @@
       console.log(notDefined); // => throws a ReferenceError
     }
 
-    // ประกาศตัวแปรหลังจากใช้งาน ในจาวาสคริปต์นั้นทำได้ (ไม่มี error)
+    // ประกาศตัวแปรหลังจากใช้งานนั้นทำได้ (ไม่มี error)
     // เพราะว่าตัวแปรจะถูกคอมไพล์และดึงขึ้นมาไว้ข้างบนสโคป
     // แต่ค่าของตัวแปรไม่ได้ถูกดึงขึ้นมาด้วย(Hoisting) จึงทำให้ค่าของตัวแปรนั้นเป็น undefined
     function example() {
-      console.log(declaredButNotAssigned); // => undefined
+      console.log(declaredButNotAssigned); // => undefined ใน ES5
       var declaredButNotAssigned = true;
     }
 
@@ -1025,7 +1021,7 @@
     // คอมไพล์เลอร์จะอ่านตัวแปรและดึงขึ้นมาไว้ด้านบนของสโคป
     function example() {
       var declaredButNotAssigned;
-      console.log(declaredButNotAssigned); // => undefined
+      console.log(declaredButNotAssigned); // => undefined ใน ES5
       declaredButNotAssigned = true;
     }
 
@@ -1036,7 +1032,7 @@
       const declaredButNotAssigned = true;
     }
     ```
-
+<!-- ####################### ทำถึงตรงนี้จ้า ################################ -->
   - [14.2](#14.2) <a name='14.2'></a> Anonymous function expressions  
   การประกาศฟังก์ชันโดยไม่ใส่ชื่อฟังก์ชัน เมื่อคอมไพล์ จะอ่านตัวแปรและดึงค่าขึ้นไปด้านบนของสโคป แต่จะยังไม่อ่านฟังก์ชัน หากมีการเรียกใช้งานก่อนบรรทัดที่ประกาศฟังก์ชันจะไม่สามารถเรียกใช้งานได้
 
